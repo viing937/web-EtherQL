@@ -1,66 +1,83 @@
 /* jshint node: true */
 'use strict';
-var MongoClient = require('mongodb').MongoClient;
-
-var CONSTR = 'mongodb://localhost:27017/ethereum';
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/ethereum');
 
 var dbHelper = function () {
     if(!(this instanceof dbHelper)) {
-        console.log('db.js init');
         var instance = new dbHelper();
+        instance.db = mongoose.connection;
+        instance.db.on('error', console.error.bind(console, 'connection error:'));
+        instance.db.once('open', function () {
+            console.log('mongoose opened.');
+            instance.statusSchema = new mongoose.Schema({
+                currentBlock: {type: String},
+                highestBlock: {type: String},
+                knownStates: {type: String},
+                pulledStates: {ype: String},
+                startingBlock: {type: String}
+            }, {
+                collection: "status"
+            });
+            instance.blockSchema = new mongoose.Schema({
+                difficulty: {type: String},
+                extraData: {type: String},
+                gasLimit: {type: String},
+                gasUsed: {type: String},
+                hash: {type: String, unique: true},
+                logsBloom: {type: String},
+                miner: {type: String},
+                mixHash: {type: String},
+                nonce: {type: String},
+                number: {type: String},
+                parentHash: {type: String},
+                receiptsRoot: {type: String},
+                sha3Uncles: {type: String},
+                size: {type: String},
+                stateRoot: {type: String},
+                timestamp: {type: String},
+                totalDifficulty: {type: String},
+                transactions: {type: Array},
+                transactionsRoot: {type: String},
+                uncles: {type: Array}
+            }, {
+                collection: "blocks"
+            });
+        });
         return instance;
     }
     return this;
 };
 
 dbHelper.prototype.updateSyncStatus = function (data) {
-    MongoClient.connect(CONSTR, function (err, db) {
-        var collection = db.collection('status');
-        collection.update({}, {$set: data}, function (err, result) {
-            if (err) {
-                console.log('Error: ' + err);
-                return;
-            }
-            if (!result.result.n) {
-                collection.insert(data, function (err, result) {
-                    if (err) {
-                        console.log('Error: ' + err);
-                        return;
-                    }
-                    db.close();
-                });
-            } else {
-                db.close();
-            }
-        });
+    var self = this;
+
+    var Status = mongoose.model('status', self.statusSchema);
+    Status.remove({}, function (err, docs) {
+        var status = new Status(data);
+        status.save();
     });
 };
 
 dbHelper.prototype.getSyncStatus = function (callback) {
-    MongoClient.connect(CONSTR, function (err, db) {
-        var collection = db.collection('status');
-        collection.findOne({}, function(err, result) {
-            if (err) {
-                console.log('Error: ' + err);
-                return;
-            }
-            callback(result);
-            db.close();
-        });
+    var self = this;
+
+    var Status = mongoose.model('status', self.statusSchema);
+    Status.findOne({}, function (err, docs) {
+        callback(docs);
     });
 };
 
 dbHelper.prototype.insertBlock = function (data, callback) {
-    MongoClient.connect(CONSTR, function (err, db) {
-        var collection = db.collection('blocks');
-        collection.insert(data, function(err, result) {
-            if (err) {
-                console.log('Error: ' + err);
-                return;
-            }
-            callback();
-            db.close();
-        });
+    var self = this;
+
+    var Block = mongoose.model('blocks', self.blockSchema);
+    var block = new Block(data);
+    block.save(function (err) {
+        if (err) {
+            console.log('ERROR: save blcok ' + JSON.stringify(data));
+        }
+        callback();
     });
 };
 

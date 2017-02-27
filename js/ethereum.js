@@ -8,16 +8,17 @@ var DbHelper = new require('./dbHelper.js')();
 
 var ethereum = function () {
     if(!(this instanceof ethereum)) {
-        console.log('ethereum.js init');
         var instance = new ethereum();
-        DbHelper.getSyncStatus(function (result) {
-            if (result) {
-                instance.currentBlock = result.currentBlock;
-            } else {
-                instance.currentBlock = null;
-            }
-            instance.syncTimer = new setInterval(instance.syncStatus.bind(instance), 2000);
-        });
+        setTimeout(function () {
+            DbHelper.getSyncStatus(function (result) {
+                if (result) {
+                    instance.currentBlock = result.currentBlock;
+                } else {
+                    instance.currentBlock = null;
+                }
+                instance.syncTimer = new setInterval(instance.syncStatus.bind(instance), 10000);
+            });
+        }, 2000);
         return instance;
     }
     return this;
@@ -58,8 +59,8 @@ ethereum.prototype.syncStatus = function () {
             if (self.currentBlock !== syncStatus.currentBlock) {
                 var start = self.currentBlock ? parseInt(self.currentBlock)+1 : 0;
                 var end = parseInt(syncStatus.currentBlock);
-                if (end - start > 100) {
-                    end = start + 100;
+                if (end - start > 500) {
+                    end = start + 500;
                 }
                 self.syncCount = end - start + 1;
                 console.log('start sync from #' + start + ' to #' + end);
@@ -69,6 +70,7 @@ ethereum.prototype.syncStatus = function () {
                         if (!self.syncCount) {
                             self.currentBlock = syncStatus.currentBlock = '0x'+end.toString(16);
                             DbHelper.updateSyncStatus(syncStatus);
+                            self.syncStatus();
                         }
                     });
                 }
@@ -119,6 +121,8 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
     });
 
     req.on('error', function (e) {
+        console.log('ERROR: updateBlock ' + blockNumber);
+        self.updateBlock(blockNumber, callback);
     });
 
     req.write(postData);
