@@ -4,24 +4,21 @@
 'use strict';
 
 var Http = require('http');
-var DbHelper = new require('./dbHelper.js')();
+var DbHelper = require('./dbHelper.js');
 
 var ethereum = function () {
-    if(!(this instanceof ethereum)) {
-        var instance = new ethereum();
-        setTimeout(function () {
-            DbHelper.getSyncStatus(function (result) {
-                if (result) {
-                    instance.currentBlock = result.currentBlock;
-                } else {
-                    instance.currentBlock = null;
-                }
-                instance.syncTimer = new setInterval(instance.syncStatus.bind(instance), 10000);
-            });
-        }, 2000);
-        return instance;
-    }
-    return this;
+    var self = this;
+
+    setTimeout(function () {
+        DbHelper.getSyncStatus(function (result) {
+            if (result) {
+                self.currentBlock = result.currentBlock;
+            } else {
+                self.currentBlock = null;
+            }
+            self.syncTimer = new setInterval(self.syncStatus.bind(self), 10000);
+        });
+    }, 2000);
 };
 
 ethereum.prototype.syncStatus = function () {
@@ -129,4 +126,4 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
     req.end();
 };
 
-module.exports = ethereum;
+module.exports = new ethereum();

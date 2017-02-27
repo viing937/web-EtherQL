@@ -3,8 +3,8 @@
 var Path = require('path');
 var Express = require('express');
 
-var ethereum = new require('./js/ethereum.js')();
-var index = require('./routes/index');
+var ethereum = require('./js/ethereum.js');
+var index = require('./routes/index.js');
 
 var app = Express();
 app.set('views', Path.join(__dirname, 'views'));
