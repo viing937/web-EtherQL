@@ -118,7 +118,7 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
     });
 
     req.on('error', function (e) {
-        console.log('ERROR: updateBlock ' + blockNumber);
+        console.error('ERROR: updateBlock ' + blockNumber + ', retry');
         self.updateBlock(blockNumber, callback);
     });
 

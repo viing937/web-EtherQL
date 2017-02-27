@@ -7,7 +7,7 @@ var dbHelper = function () {
 
     mongoose.connect('mongodb://localhost/ethereum');
     self.db = mongoose.connection;
-    self.db.on('error', console.error.bind(console, 'connection error:'));
+    self.db.on('error', console.error.bind(console, 'Error: connection error:'));
     self.db.once('open', function () {
         console.log('mongoose opened.');
         self.statusSchema = new mongoose.Schema({
@@ -72,7 +72,7 @@ dbHelper.prototype.insertBlock = function (data, callback) {
     var block = new Block(data);
     block.save(function (err) {
         if (err) {
-            console.log('ERROR: save block ' + JSON.stringify(data));
+            console.error('ERROR: save block ' + JSON.stringify(data));
         }
         callback();
     });
@@ -91,7 +91,7 @@ dbHelper.prototype.queryBlcok = function (whereStr, callback) {
         }
     }, function (err, docs) {
         if (err) {
-            console.log('ERROR: query block ' + JSON.stringify(whereStr));
+            console.error('ERROR: query block ' + JSON.stringify(whereStr));
         }
         callback(docs);
     });
