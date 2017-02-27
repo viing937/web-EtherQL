@@ -78,18 +78,12 @@ dbHelper.prototype.insertBlock = function (data, callback) {
     });
 };
 
-dbHelper.prototype.queryBlcok = function (whereStr, callback) {
+dbHelper.prototype.queryBlcok = function (whereStr, params, callback) {
     var self = this;
     var Block = mongoose.model('blocks', self.blockSchema);
     Block.find(whereStr, [
         'number', 'hash', 'miner'
-    ], {
-        skip: 0,
-        limit: 5,
-        sort: {
-            timestamp: -1
-        }
-    }, function (err, docs) {
+    ], params, function (err, docs) {
         if (err) {
             console.error('ERROR: query block ' + JSON.stringify(whereStr));
         }

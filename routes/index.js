@@ -8,9 +8,7 @@ var DbHelper = require('../js/dbHelper.js');
 
 /* GET home page. */
 Router.get('/', function(req, res, next) {
-    DbHelper.queryBlcok({}, function (docs) {
-        res.send(JSON.stringify(docs));
-    });
+    res.redirect('/block');
 });
 
 module.exports = Router;
