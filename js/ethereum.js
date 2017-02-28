@@ -113,6 +113,7 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
         });
         res.on('end', function () {
             var block = JSON.parse(response).result;
+            block.number = parseInt(block.number);
             DbHelper.insertBlock(block, callback);
         });
     });

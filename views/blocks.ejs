@@ -64,7 +64,7 @@
         <tbody>
           <% for (var i = 0; i < blocks.length; i++) { %>
             <tr>
-              <td><%= parseInt(blocks[i].number) %></td>
+              <td><%= blocks[i].number %></td>
               <td><%= blocks[i].hash.substr(0, 10) + '...' %></td>
               <td><%= (parseInt(blocks[i].difficulty)/1000000000000).toFixed(3) + 'T' %></td>
               <td><%= blocks[i].miner.substr(0, 10) + '...' %></td>

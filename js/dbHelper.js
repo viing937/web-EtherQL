@@ -29,7 +29,7 @@ var dbHelper = function () {
             miner: {type: String},
             mixHash: {type: String},
             nonce: {type: String},
-            number: {type: String},
+            number: {type: Number},
             parentHash: {type: String},
             receiptsRoot: {type: String},
             sha3Uncles: {type: String},
