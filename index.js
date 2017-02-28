@@ -11,6 +11,8 @@ var app = Express();
 app.set('views', Path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use(Express.static(Path.join(__dirname, 'public')));
+
 app.use('/', index);
 app.use('/block', block);
 

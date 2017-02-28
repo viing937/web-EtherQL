@@ -1,10 +1,83 @@
-<h1><%= title %></h1>
-<ul>
-    <% for(var i=0; i<supplies.length; i++) { %>
-        <li>
-            <a>
-                <%= supplies[i] %>
-            </a>
-        </li>
-    <% } %>
-</ul>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>EtherQL</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/theme.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">EtherQL</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Blocks</a></li>
+            </li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+
+    <div class="container theme-showcase" role="main">
+
+      <div class="page-header">
+        <h1>Blocks</h1>
+      </div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Number</th>
+            <th>Hash</th>
+            <th>Difficulty</th>
+            <th>Miner</th>
+            <th>Gas Used</th>
+            <th>Time</th>
+            <th># Tx</th>
+            <th># Uncles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (var i = 0; i < blocks.length; i++) { %>
+            <tr>
+              <td><%= parseInt(blocks[i].number) %></td>
+              <td><%= blocks[i].hash.substr(0, 10) + '...' %></td>
+              <td><%= (parseInt(blocks[i].difficulty)/1000000000000).toFixed(3) + 'T' %></td>
+              <td><%= blocks[i].miner.substr(0, 10) + '...' %></td>
+              <td><%= parseInt(blocks[i].gasUsed) %></td>
+              <td><%= new Date(parseInt(blocks[i].timestamp)).getTime() %></td>
+              <td><%= blocks[i].transactions.length %></td>
+              <td><%= blocks[i].uncles.length %></td>
+            </tr>
+          <% } %>
+
+        </tbody>
+      </table>
+
+    </div> <!-- /container -->
+  </body>
+</html>
