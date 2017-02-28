@@ -69,7 +69,7 @@
               <td><%= (parseInt(blocks[i].difficulty)/1000000000000).toFixed(3) + 'T' %></td>
               <td><%= blocks[i].miner.substr(0, 10) + '...' %></td>
               <td><%= parseInt(blocks[i].gasUsed) %></td>
-              <td><%= new Date(parseInt(blocks[i].timestamp)).getTime() %></td>
+              <td><%= blocks[i].timestamp %></td>
               <td><%= blocks[i].transactions.length %></td>
               <td><%= blocks[i].uncles.length %></td>
             </tr>

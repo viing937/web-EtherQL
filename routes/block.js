@@ -15,7 +15,7 @@ Router.get('/', function(req, res, next) {
     var start = parseInt(Ethereum.currentBlock) - page*pageSize;
     var end = start + pageSize;
 
-    DbHelper.queryBlcok({number: {$gt: '0x'+start.toString(16), $lte: '0x'+end.toString(16)}}, [
+    DbHelper.queryBlcok({number: {$gt: start, $lte: end}}, [
         'number', 'hash', 'difficulty', 'miner', 'gasUsed', 'timestamp', 'transactions', 'uncles'
     ], {
         sort: {

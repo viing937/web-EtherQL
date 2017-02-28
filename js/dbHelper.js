@@ -11,11 +11,7 @@ var dbHelper = function () {
     self.db.once('open', function () {
         console.log('mongoose opened.');
         self.statusSchema = new mongoose.Schema({
-            currentBlock: {type: String},
-            highestBlock: {type: String},
-            knownStates: {type: String},
-            pulledStates: {ype: String},
-            startingBlock: {type: String}
+            blockNumber: {type: Number},
         }, {
             collection: "status"
         });
@@ -35,7 +31,7 @@ var dbHelper = function () {
             sha3Uncles: {type: String},
             size: {type: String},
             stateRoot: {type: String},
-            timestamp: {type: String},
+            timestamp: {type: Date},
             totalDifficulty: {type: String},
             transactions: {type: Array},
             transactionsRoot: {type: String},

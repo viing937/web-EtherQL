@@ -30,9 +30,9 @@ ethereum.prototype.syncStatus = function () {
 
     var postData = JSON.stringify({
         jsonrpc: "2.0",
-        method: "eth_syncing",
+        method: "eth_blockNumber",
         params:[],
-        id: 1
+        id: 83
     });
 
     var options = {
@@ -52,21 +52,19 @@ ethereum.prototype.syncStatus = function () {
             response += chunk;
         });
         res.on('end', function () {
-            var syncStatus = JSON.parse(response).result;
-            if (self.currentBlock !== syncStatus.currentBlock) {
-                var start = self.currentBlock ? parseInt(self.currentBlock)+1 : 0;
-                var end = parseInt(syncStatus.currentBlock);
-                if (end - start > 500) {
-                    end = start + 500;
-                }
+            var blockNumber = parseInt(JSON.parse(response).result);
+            if (self.currentBlock !== blockNumber) {
+                var start = self.currentBlock ? self.currentBlock+1 : 0;
+                var end = blockNumber-start>500 ? start+500 : blockNumber;
                 self.syncCount = end - start + 1;
                 console.log('start sync from #' + start + ' to #' + end);
                 for (let i = start; i <= end; i++) {
                     self.updateBlock(i, function () {
                         self.syncCount -= 1;
                         if (!self.syncCount) {
-                            self.currentBlock = syncStatus.currentBlock = '0x'+end.toString(16);
-                            DbHelper.updateSyncStatus(syncStatus);
+                            var blockStatus = {};
+                            self.currentBlock = blockStatus.blockNumber = end;
+                            DbHelper.updateSyncStatus(blockStatus);
                             self.syncStatus();
                         }
                     });
@@ -114,6 +112,7 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
         res.on('end', function () {
             var block = JSON.parse(response).result;
             block.number = parseInt(block.number);
+            block.timestamp = new Date(parseInt(block.timestamp*1000));
             DbHelper.insertBlock(block, callback);
         });
     });
