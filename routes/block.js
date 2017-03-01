@@ -28,4 +28,28 @@ Router.get('/', function(req, res, next) {
     });
 });
 
+Router.get('/:number', function(req, res, next) {
+    var number = parseInt(req.params.number);
+    if (!number) {
+        res.redirect('/block');
+        return;
+    }
+
+    DbHelper.queryBlcok({number: number}, [
+        'number', 'hash', 'difficulty', 'miner', 'gasLimit', 'gasUsed', 'timestamp', 'sha3Uncles', 'stateRoot', 'transactionsRoot', 'size', 'nonce', 'transactions', 'uncles'
+    ], {
+        sort: {
+            timestamp: -1
+        }
+    }, function (docs) {
+        if (docs.length > 0) {
+            res.render('blockDetail', {
+                block: docs[0]
+            });
+        } else {
+            res.redirect('/block');
+        }
+    });
+});
+
 module.exports = Router;

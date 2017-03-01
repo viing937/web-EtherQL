@@ -35,7 +35,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav">
-            <li class="active"><a href="/block">Blocks</a></li>
+            <li class="active"><a href="/block#">Blocks</a></li>
             </li>
           </ul>
         </div><!--/.nav-collapse -->
@@ -45,38 +45,22 @@
     <div class="container theme-showcase" role="main">
 
       <div class="page-header">
-        <h1>Blocks</h1>
+        <h1>Block Number: <%= block.number %></h1>
       </div>
 
-      <table class="table">
-        <thead>
-          <tr>
-            <th>Number</th>
-            <th>Hash</th>
-            <th>Difficulty</th>
-            <th>Miner</th>
-            <th>Gas Used</th>
-            <th>Time</th>
-            <th># Tx</th>
-            <th># Uncles</th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (var i = 0; i < blocks.length; i++) { %>
-            <tr>
-              <td><%- link_to(blocks[i].number, '/block/'+blocks[i].number) %></td>
-              <td><%= blocks[i].hash.substr(0, 10) + '...' %></td>
-              <td><%= (parseInt(blocks[i].difficulty)/1000000000000).toFixed(3) + 'T' %></td>
-              <td><%= blocks[i].miner.substr(0, 10) + '...' %></td>
-              <td><%= parseInt(blocks[i].gasUsed) %></td>
-              <td><%= blocks[i].timestamp %></td>
-              <td><%= blocks[i].transactions.length %></td>
-              <td><%= blocks[i].uncles.length %></td>
-            </tr>
-          <% } %>
-
-        </tbody>
-      </table>
+      <ul class="list-group">
+        <li class="list-group-item">Hash: <%= block.hash %> </li>
+        <li class="list-group-item">Difficulty: <%= parseInt(block.difficulty) %> </li>
+        <li class="list-group-item">Miner: <%= block.miner %> </li>
+        <li class="list-group-item">Gas Limit: <%= parseInt(block.gasLimit) %> </li>
+        <li class="list-group-item">Gas Usage: <%= (parseInt(block.gasUsed)/parseInt(block.gasLimit)*100).toFixed(1) %>% (<%= parseInt(block.gasUsed) %> of <%= parseInt(block.gasLimit) %>) </li>
+        <li class="list-group-item">Time: <%= block.timestamp %> </li>
+        <li class="list-group-item">Uncle Hash: <%= block.sha3Uncles %> </li>
+        <li class="list-group-item">Root: <%= block.stateRoot %> </li>
+        <li class="list-group-item">Tx Hash: <%= block.transactionsRoot %> </li>
+        <li class="list-group-item">Size: <%= parseInt(block.size) %> bytes </li>
+        <li class="list-group-item">Nonce: <%= block.nonce %> </li>
+      </ul>
 
     </div> <!-- /container -->
   </body>
