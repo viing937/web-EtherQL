@@ -12,7 +12,7 @@ var ethereum = function () {
     setTimeout(function () {
         DbHelper.getSyncStatus(function (result) {
             if (result) {
-                self.currentBlock = result.currentBlock;
+                self.currentBlock = result.blockNumber;
             } else {
                 self.currentBlock = null;
             }
