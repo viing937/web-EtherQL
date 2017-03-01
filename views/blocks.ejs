@@ -48,6 +48,69 @@
         <h1>Blocks</h1>
       </div>
 
+      <ul class="pagination pagination-sm">
+
+        <% if (page > 1) { %>
+          <li> <%- link_to('&laquo;', '/block/?page=' + (page-1)) %> </li>
+        <% } else { %>
+          <li class="disabled"><a>&laquo;</a></li>
+        <% } %>
+
+        <% if (page === 1) { %>
+          <li class="active"><a> 1 </a></li>
+        <% } else { %>
+          <li> <%- link_to('1', '/block/?page=1') %> </li>
+        <% } %>
+
+        <% if (page > 4) { %>
+          <li class="disabled"><a>...</a></li>
+        <% } else if (page === 2) { %>
+          <li class="active"><a> 2 </a></li>
+        <% } else { %>
+          <li> <%- link_to('2', '/block/?page=2') %> </li>
+        <% } %>
+
+        <%
+          var centerPage;
+          if (page <= 4) {
+            centerPage = 4;
+          } else if (maxPage-page < 4) {
+            centerPage = maxPage - 3;
+          } else {
+            centerPage = page;
+          }
+        %>
+
+        <% for (var i = centerPage-1; i <= centerPage+1; i++) {
+          if (page === i) { %>
+            <li class="active"><a> <%= i %> </a></li>
+          <% } else { %>
+            <li> <%- link_to(i, '/block/?page='+i ) %> </li>
+          <% }
+        } %>
+
+        <% if (maxPage-page >= 4) { %>
+          <li class="disabled"><a>...</a></li>
+        <% } else if (page === maxPage-1) { %>
+          <li class="active"><a> <%= maxPage-1 %> </a></li>
+        <% } else { %>
+          <li> <%- link_to(maxPage-1, '/block/?page=' + (maxPage-1)) %> </li>
+        <% } %>
+
+        <% if (page === maxPage) { %>
+          <li class="active"><a> <%= maxPage %> </a></li>
+        <% } else { %>
+          <li> <%- link_to(maxPage, '/block/?page=' + maxPage) %> </li>
+        <% } %>
+
+        <% if (page < maxPage) { %>
+          <li> <%- link_to('&raquo;', '/block/?page=' + (page+1)) %> </li>
+        <% } else { %>
+          <li class="disabled"><a>&raquo;</a></li>
+        <% } %>
+
+      </ul>
+
       <table class="table">
         <thead>
           <tr>
@@ -74,9 +137,9 @@
               <td><%= blocks[i].uncles.length %></td>
             </tr>
           <% } %>
-
         </tbody>
       </table>
+
 
     </div> <!-- /container -->
   </body>

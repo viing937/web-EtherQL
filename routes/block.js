@@ -12,7 +12,7 @@ Router.get('/', function(req, res, next) {
     var page = req.query.page ? parseInt(req.query.page) : 1;
     var pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 25;
 
-    var start = parseInt(Ethereum.currentBlock) - page*pageSize;
+    var start = Ethereum.currentBlock - page*pageSize;
     var end = start + pageSize;
 
     DbHelper.queryBlcok({number: {$gt: start, $lte: end}}, [
@@ -23,7 +23,9 @@ Router.get('/', function(req, res, next) {
         }
     }, function (docs) {
         res.render('blocks', {
-            blocks: (docs ? docs : [])
+            blocks: (docs ? docs : []),
+            page: page,
+            maxPage: Math.ceil(Ethereum.currentBlock/pageSize)
         });
     });
 });
