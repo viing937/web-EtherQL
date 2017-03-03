@@ -5,6 +5,7 @@
 
 var Http = require('http');
 var DbHelper = require('./dbHelper.js');
+var Config = require('../etherql.cfg.json');
 
 var ethereum = function () {
     var self = this;
@@ -36,8 +37,8 @@ ethereum.prototype.syncStatus = function () {
     });
 
     var options = {
-        host: 'localhost',
-        port: 8545,
+        host: Config.gethHost,
+        port: Config.gethPort,
         path: '/',
         headers: {
             "Content-Type": 'application/x-www-form-urlencoded',
@@ -74,6 +75,7 @@ ethereum.prototype.syncStatus = function () {
     });
 
     req.on('error', function (e) {
+        console.error('ERROR: syncStatus, ' + e.message);
     });
 
     req.write(postData);
@@ -88,14 +90,14 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
         method: "eth_getBlockByNumber",
         params:[
             "0x" + blockNumber.toString(16),
-            false
+            true
         ],
         id: 1
     });
 
     var options = {
-        host: 'localhost',
-        port: 8545,
+        host: Config.gethHost,
+        port: Config.gethPort,
         path: '/',
         headers: {
             "Content-Type": 'application/x-www-form-urlencoded',
@@ -118,7 +120,7 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
     });
 
     req.on('error', function (e) {
-        console.error('ERROR: updateBlock ' + blockNumber + ', retry');
+        console.error('ERROR: updateBlock ' + blockNumber + ', ' + e.message + ', retry');
         self.updateBlock(blockNumber, callback);
     });
 
