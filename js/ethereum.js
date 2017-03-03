@@ -10,13 +10,14 @@ var Config = require('../etherql.cfg.json');
 var ethereum = function () {
     var self = this;
 
+    self.syncCount = 0;
+    self.syncTransCount = 0;
+
     setTimeout(function () {
         DbHelper.getSyncStatus(function (result) {
-            if (result) {
-                self.currentBlock = result.blockNumber;
-            } else {
-                self.currentBlock = null;
-            }
+            result = result ? result : {};
+            self.currentBlock = result.blockNumber ? result.blockNumber : null;
+            self.transNumber = result.transNumber ? result.transNumber : 0;
             self.syncTimer = new setInterval(self.syncStatus.bind(self), 10000);
         });
     }, 2000);
@@ -25,7 +26,7 @@ var ethereum = function () {
 ethereum.prototype.syncStatus = function () {
     var self = this;
 
-    if (self.syncCount > 0) {
+    if (self.syncCount > 0 || self.syncTransCount > 0) {
         return;
     }
 
@@ -60,12 +61,11 @@ ethereum.prototype.syncStatus = function () {
                 self.syncCount = end - start + 1;
                 console.log('start sync from #' + start + ' to #' + end);
                 for (let i = start; i <= end; i++) {
-                    self.updateBlock(i, function () {
+                    self.updateBlockByNumber(i, function () {
                         self.syncCount -= 1;
                         if (!self.syncCount) {
-                            var blockStatus = {};
-                            self.currentBlock = blockStatus.blockNumber = end;
-                            DbHelper.updateSyncStatus(blockStatus);
+                            self.currentBlock = end;
+                            DbHelper.updateSyncStatus({blockNumber: end});
                             self.syncStatus();
                         }
                     });
@@ -82,7 +82,7 @@ ethereum.prototype.syncStatus = function () {
     req.end();
 };
 
-ethereum.prototype.updateBlock = function (blockNumber, callback) {
+ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
     var self = this;
 
     var postData = JSON.stringify({
@@ -113,15 +113,29 @@ ethereum.prototype.updateBlock = function (blockNumber, callback) {
         });
         res.on('end', function () {
             var block = JSON.parse(response).result;
+
+            self.syncTransCount += block.transactions.length;
+
             block.number = parseInt(block.number);
             block.timestamp = new Date(parseInt(block.timestamp*1000));
+            for (var i = 0; i < block.transactions.length; i++) {
+                block.transactions[i].blockNumber = parseInt(block.transactions[i].blockNumber);
+                block.transactions[i].transactionIndex = parseInt(block.transactions[i].transactionIndex);
+                DbHelper.insertTransaction(block.transactions[i], function () {
+                    self.syncTransCount -= 1;
+                    if (!self.syncTransCount) {
+                        self.transNumber += block.transactions.length;
+                        DbHelper.updateSyncStatus({transNumber: self.transNumber});
+                    }
+                });
+            }
             DbHelper.insertBlock(block, callback);
         });
     });
 
     req.on('error', function (e) {
-        console.error('ERROR: updateBlock ' + blockNumber + ', ' + e.message + ', retry');
-        self.updateBlock(blockNumber, callback);
+        console.error('ERROR: updateBlockByNumber ' + blockNumber + ', ' + e.message + ', retry');
+        self.updateBlockByNumber(blockNumber, callback);
     });
 
     req.write(postData);

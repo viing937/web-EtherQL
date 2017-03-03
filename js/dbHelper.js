@@ -13,7 +13,8 @@ var dbHelper = function () {
         console.log('mongoose opened.');
 
         self.statusSchema = new mongoose.Schema({
-            blockNumber: {type: Number}
+            blockNumber: {type: Number},
+            transNumber: {type: Number}
         }, {
             collection: "status"
         });
@@ -44,12 +45,12 @@ var dbHelper = function () {
         });
 
         self.transactionSchema = new mongoose.Schema({
-            blockHash: {type: String, unique: true},
+            blockHash: {type: String},
             blockNumber: {type: Number},
             from: {type: String},
             gas: {type: String},
             gasPrice: {type: String},
-            hash: {type: String},
+            hash: {type: String, unique: true},
             input: {type: String},
             nonce: {type: String},
             to: {type: String},
