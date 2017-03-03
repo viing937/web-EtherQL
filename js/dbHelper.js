@@ -45,6 +45,7 @@ var dbHelper = function () {
         });
 
         self.transactionSchema = new mongoose.Schema({
+            number: {type: Number},
             blockHash: {type: String},
             blockNumber: {type: Number},
             from: {type: String},

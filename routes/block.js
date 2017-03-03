@@ -19,7 +19,7 @@ Router.get('/', function(req, res, next) {
         'number', 'hash', 'difficulty', 'miner', 'gasUsed', 'timestamp', 'transactions', 'uncles'
     ], {
         sort: {
-            timestamp: -1
+            number: -1
         }
     }, function (docs) {
         res.render('blocks', {
@@ -40,9 +40,6 @@ Router.get('/:number', function(req, res, next) {
     DbHelper.queryBlcok({number: number}, [
         'number', 'hash', 'difficulty', 'miner', 'gasLimit', 'gasUsed', 'timestamp', 'sha3Uncles', 'stateRoot', 'transactionsRoot', 'size', 'nonce', 'transactions', 'uncles'
     ], {
-        sort: {
-            timestamp: -1
-        }
     }, function (docs) {
         if (docs.length > 0) {
             res.render('blockDetail', {
