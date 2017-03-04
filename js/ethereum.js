@@ -114,7 +114,11 @@ ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
         });
         res.on('end', function () {
             var block = JSON.parse(response).result;
-
+            if (!block) {
+                console.error('ERROR updateBlockByNumber, retry');
+                self.updateBlockByNumber(blockNumber, callback);
+                return;
+            }
             self.syncTransCount += block.transactions.length;
 
             block.number = parseInt(block.number);
