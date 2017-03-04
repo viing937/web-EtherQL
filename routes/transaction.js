@@ -30,26 +30,27 @@ Router.get('/', function(req, res, next) {
         });
     });
 });
-/*
-Router.get('/:number', function(req, res, next) {
-    var number = parseInt(req.params.number);
-    if (!number) {
-        res.redirect('/block');
+
+Router.get('/:hash', function(req, res, next) {
+    var hash = req.params.hash;
+    if (!hash) {
+        res.redirect('/transaction');
         return;
     }
 
-    DbHelper.queryBlcok({number: number}, [
-        'number', 'hash', 'difficulty', 'miner', 'gasLimit', 'gasUsed', 'timestamp', 'sha3Uncles', 'stateRoot', 'transactionsRoot', 'size', 'nonce', 'transactions', 'uncles'
+    DbHelper.queryTransaction({hash: hash}, [
+        'hash', 'blockNumber', 'from', 'to', 'value', 'nonce', 'gasPrice', 'gas'
     ], {
     }, function (docs) {
         if (docs.length > 0) {
-            res.render('blockDetail', {
-                block: docs[0]
+            res.render('transactionDetail', {
+                pageName: 'TransactionDetail',
+                transaction: docs[0]
             });
         } else {
-            res.redirect('/block');
+            res.redirect('/transaction');
         }
     });
 });
-*/
+
 module.exports = Router;

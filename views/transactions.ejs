@@ -103,7 +103,7 @@
         <tbody>
           <% for (var i = 0; i < transactions.length; i++) { %>
             <tr>
-              <td><%= transactions[i].hash.substr(0, 10) + '...' %></td>
+              <td><%- link_to(transactions[i].hash.substr(0, 10)+'...', 'transaction/'+transactions[i].hash) %></td>
               <td><%- link_to(String(transactions[i].blockNumber), '/block/'+transactions[i].blockNumber) %></td>
               <td><%= transactions[i].from.substr(0, 10) + '...' %></td>
               <td><%= transactions[i].to ? transactions[i].to.substr(0, 10) + '...' : 'null' %></td>

@@ -25,7 +25,7 @@
     <div class="container theme-showcase" role="main">
 
       <div class="page-header">
-        <h1>Block Number: <%= block.number %></h1>
+        <h3>Block Number: <%= block.number %></h3>
       </div>
 
       <ul class="list-group">
@@ -41,6 +41,17 @@
         <li class="list-group-item">Size: <%= parseInt(block.size) %> bytes </li>
         <li class="list-group-item">Nonce: <%= block.nonce %> </li>
       </ul>
+
+      <% if (block.transactions.length > 0) { %>
+        <div class="page-header">
+          <h3>Transactions hash:</h3>
+        </div>
+        <ul class="list-group">
+          <% for (var i = 0; i < block.transactions.length; i++) { %>
+            <li class="list-group-item"><%- link_to(block.transactions[i], '/transaction/'+block.transactions[i]) %> </li>
+          <% } %>
+        </ul>
+      <% } %>
 
     </div> <!-- /container -->
   </body>
