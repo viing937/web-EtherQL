@@ -12,25 +12,25 @@ Router.get('/', function(req, res, next) {
     var page = req.query.page ? parseInt(req.query.page) : 1;
     var pageSize = req.query.pageSize ? parseInt(req.query.pageSize) : 25;
 
-    var start = Ethereum.currentBlock - page*pageSize;
+    var start = Ethereum.transNumber - page*pageSize;
     var end = start + pageSize;
 
-    DbHelper.queryBlcok({number: {$gt: start, $lte: end}}, [
-        'number', 'hash', 'difficulty', 'miner', 'gasUsed', 'timestamp', 'transactions', 'uncles'
+    DbHelper.queryTransaction({number: {$gt: start, $lte: end}}, [
+        'hash', 'blockNumber', 'from', 'to'
     ], {
         sort: {
             number: -1
         }
     }, function (docs) {
-        res.render('blocks', {
-            pageName: 'Blocks',
-            blocks: (docs ? docs : []),
+        res.render('transactions', {
+            pageName: 'Transactions',
+            transactions: (docs ? docs : []),
             page: page,
-            maxPage: Math.ceil(Ethereum.currentBlock/pageSize)
+            maxPage: Math.ceil(Ethereum.transNumber/pageSize)
         });
     });
 });
-
+/*
 Router.get('/:number', function(req, res, next) {
     var number = parseInt(req.params.number);
     if (!number) {
@@ -44,7 +44,6 @@ Router.get('/:number', function(req, res, next) {
     }, function (docs) {
         if (docs.length > 0) {
             res.render('blockDetail', {
-                pageName: 'BlockDetail',
                 block: docs[0]
             });
         } else {
@@ -52,5 +51,5 @@ Router.get('/:number', function(req, res, next) {
         }
     });
 });
-
+*/
 module.exports = Router;

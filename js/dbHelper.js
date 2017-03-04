@@ -125,4 +125,15 @@ dbHelper.prototype.insertTransaction = function (data, callback) {
     });
 };
 
+dbHelper.prototype.queryTransaction = function (whereStr, fields, params, callback) {
+    var self = this;
+    var Transaction = mongoose.model('transactions', self.transactionSchema);
+    Transaction.find(whereStr, fields, params, function (err, docs) {
+        if (err) {
+            console.error('ERROR: query transaction ' + JSON.stringify(whereStr));
+        }
+        callback(docs);
+    });
+};
+
 module.exports = new dbHelper();

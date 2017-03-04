@@ -25,13 +25,13 @@
     <div class="container theme-showcase" role="main">
 
       <div class="page-header">
-        <h1><%= pageName %></h1>
+        <h1> <%= pageName %> </h1>
       </div>
 
       <ul class="pagination pagination-sm">
 
         <% if (page > 1) { %>
-          <li> <%- link_to('&laquo;', '/block/?page=' + (page-1)) %> </li>
+          <li> <%- link_to('&laquo;', '/transaction/?page=' + (page-1)) %> </li>
         <% } else { %>
           <li class="disabled"><a>&laquo;</a></li>
         <% } %>
@@ -39,7 +39,7 @@
         <% if (page === 1) { %>
           <li class="active"><a> 1 </a></li>
         <% } else { %>
-          <li> <%- link_to('1', '/block/?page=1') %> </li>
+          <li> <%- link_to('1', '/transaction/?page=1') %> </li>
         <% } %>
 
         <% if (page > 4) { %>
@@ -47,7 +47,7 @@
         <% } else if (page === 2) { %>
           <li class="active"><a> 2 </a></li>
         <% } else { %>
-          <li> <%- link_to('2', '/block/?page=2') %> </li>
+          <li> <%- link_to('2', '/transaction/?page=2') %> </li>
         <% } %>
 
         <%
@@ -65,7 +65,7 @@
           if (page === i) { %>
             <li class="active"><a> <%= i %> </a></li>
           <% } else { %>
-            <li> <%- link_to(i, '/block/?page='+i ) %> </li>
+            <li> <%- link_to(i, '/transaction/?page='+i ) %> </li>
           <% }
         } %>
 
@@ -74,17 +74,17 @@
         <% } else if (page === maxPage-1) { %>
           <li class="active"><a> <%= maxPage-1 %> </a></li>
         <% } else { %>
-          <li> <%- link_to(maxPage-1, '/block/?page=' + (maxPage-1)) %> </li>
+          <li> <%- link_to(maxPage-1, '/transaction/?page=' + (maxPage-1)) %> </li>
         <% } %>
 
         <% if (page === maxPage) { %>
           <li class="active"><a> <%= maxPage %> </a></li>
         <% } else { %>
-          <li> <%- link_to(maxPage, '/block/?page=' + maxPage) %> </li>
+          <li> <%- link_to(maxPage, '/transaction/?page=' + maxPage) %> </li>
         <% } %>
 
         <% if (page < maxPage) { %>
-          <li> <%- link_to('&raquo;', '/block/?page=' + (page+1)) %> </li>
+          <li> <%- link_to('&raquo;', '/transaction/?page=' + (page+1)) %> </li>
         <% } else { %>
           <li class="disabled"><a>&raquo;</a></li>
         <% } %>
@@ -94,27 +94,19 @@
       <table class="table">
         <thead>
           <tr>
-            <th>Number</th>
             <th>Hash</th>
-            <th>Difficulty</th>
-            <th>Miner</th>
-            <th>Gas Used</th>
-            <th>Time</th>
-            <th># Tx</th>
-            <th># Uncles</th>
+            <th>Block</th>
+            <th>From</th>
+            <th>To</th>
           </tr>
         </thead>
         <tbody>
-          <% for (var i = 0; i < blocks.length; i++) { %>
+          <% for (var i = 0; i < transactions.length; i++) { %>
             <tr>
-              <td><%- link_to(String(blocks[i].number), '/block/'+blocks[i].number) %></td>
-              <td><%= blocks[i].hash.substr(0, 10) + '...' %></td>
-              <td><%= (parseInt(blocks[i].difficulty)/1000000000000).toFixed(3) + 'T' %></td>
-              <td><%= blocks[i].miner.substr(0, 10) + '...' %></td>
-              <td><%= parseInt(blocks[i].gasUsed) %></td>
-              <td><%= blocks[i].timestamp %></td>
-              <td><%= blocks[i].transactions.length %></td>
-              <td><%= blocks[i].uncles.length %></td>
+              <td><%= transactions[i].hash.substr(0, 10) + '...' %></td>
+              <td><%- link_to(String(transactions[i].blockNumber), '/block/'+transactions[i].blockNumber) %></td>
+              <td><%= transactions[i].from.substr(0, 10) + '...' %></td>
+              <td><%= transactions[i].to ? transactions[i].to.substr(0, 10) + '...' : 'null' %></td>
             </tr>
           <% } %>
         </tbody>
