@@ -115,7 +115,7 @@ ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
         res.on('end', function () {
             var block = JSON.parse(response).result;
             if (!block) {
-                console.error('ERROR updateBlockByNumber, retry');
+                console.error('ERROR updateBlockByNumber ' + blockNumber + ', retry');
                 self.updateBlockByNumber(blockNumber, callback);
                 return;
             }
