@@ -1,5 +1,5 @@
 {
-    "mongo": "mongodb://localhost/ethereum",
-    "gethHost": "localhost",
+    "mongo": "mongodb://mongodb:27017/ethereum",
+    "gethHost": "ethereum",
     "gethPort": 8545
 }

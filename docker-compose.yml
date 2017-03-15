@@ -7,4 +7,20 @@ services:
     ports:
       - "30303:30303"
       - "8545:8545"
-    entrypoint: /geth --fast --cache=512 --rpc --rpcaddr "0.0.0.0"
+    entrypoint: /geth --cache=512 --rpc --rpcaddr "0.0.0.0"
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - ./dbdata:/data/db
+    ports:
+      - "27017:27017"
+  web-etherql:
+    build: ./
+    volumes:
+      - .:/web-EtherQL
+    command: bash -c "npm install && npm run start"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - ethereum
+      - mongodb
