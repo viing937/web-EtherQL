@@ -2,17 +2,25 @@
 
 A simple webview for ethereum depending on [geth](https://github.com/ethereum/go-ethereum) and mongodb.
 
-## Sync Blockchain Data
+## Docker
 
 ```
-$ geth --rpc --fast
+$ docker-compose up
 ```
 
-## Start Mongodb
+## Common Way
+
+### Sync Blockchain Data
+
+```
+$ geth --rpc
+```
+
+### Start Mongodb
 
 Run a mongod process as a daemon.
 
-## Check Configuration
+### Check Configuration
 
 ```
 $ cat etherql.cfg.json 
@@ -26,7 +34,7 @@ $ cat etherql.cfg.json
 }
 ```
 
-## Start Web Server
+### Start Web Server
 
 ```
 $ npm install
