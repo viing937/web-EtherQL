@@ -4,16 +4,16 @@ services:
     image: ethereum/client-go
     volumes:
       - ./blockchains:/root/.ethereum
-    ports:
-      - "30303:30303"
-      - "8545:8545"
+    expose:
+      - "30303"
+      - "8545"
     entrypoint: /geth --cache=512 --rpc --rpcaddr "0.0.0.0"
   mongodb:
     image: mongo:latest
     volumes:
       - ./dbdata:/data/db
-    ports:
-      - "27017:27017"
+    expose:
+      - "27017"
   web-etherql:
     build: ./
     volumes:
