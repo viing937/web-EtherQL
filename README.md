@@ -10,17 +10,17 @@ $ docker-compose up
 
 ## Common Way
 
-### Sync Blockchain Data
+### 1. Sync blockchain data
 
 ```
 $ geth --rpc
 ```
 
-### Start Mongodb
+### 2. Start Mongodb
 
 Run a mongod process as a daemon.
 
-### Check Configuration
+### 3. Check Configuration
 
 ```
 $ cat etherql.cfg.json 
@@ -34,7 +34,7 @@ $ cat etherql.cfg.json
 }
 ```
 
-### Start Web Server
+### 4. Start Web Server
 
 ```
 $ npm install
