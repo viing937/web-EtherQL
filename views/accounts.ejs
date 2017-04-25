@@ -1,0 +1,114 @@
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>EtherQL</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/stylesheets/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap theme -->
+    <link href="/stylesheets/bootstrap-theme.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="/stylesheets/theme.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <%- include('header'); %>
+
+    <div class="container theme-showcase" role="main">
+
+      <div class="page-header">
+        <h1><%= pageName %></h1>
+      </div>
+
+      <ul class="pagination pagination-sm">
+
+        <% if (page > 1) { %>
+          <li> <%- link_to('&laquo;', '/account/?page=' + (page-1)) %> </li>
+        <% } else { %>
+          <li class="disabled"><a>&laquo;</a></li>
+        <% } %>
+
+        <% if (page === 1) { %>
+          <li class="active"><a> 1 </a></li>
+        <% } else { %>
+          <li> <%- link_to('1', '/account/?page=1') %> </li>
+        <% } %>
+
+        <% if (page > 4) { %>
+          <li class="disabled"><a>...</a></li>
+        <% } else if (page === 2) { %>
+          <li class="active"><a> 2 </a></li>
+        <% } else { %>
+          <li> <%- link_to('2', '/account/?page=2') %> </li>
+        <% } %>
+
+        <%
+          var centerPage;
+          if (page <= 4) {
+            centerPage = 4;
+          } else if (maxPage-page < 4) {
+            centerPage = maxPage - 3;
+          } else {
+            centerPage = page;
+          }
+        %>
+
+        <% for (var i = centerPage-1; i <= centerPage+1; i++) {
+          if (page === i) { %>
+            <li class="active"><a> <%= i %> </a></li>
+          <% } else { %>
+            <li> <%- link_to(i, '/account/?page='+i ) %> </li>
+          <% }
+        } %>
+
+        <% if (maxPage-page >= 4) { %>
+          <li class="disabled"><a>...</a></li>
+        <% } else if (page === maxPage-1) { %>
+          <li class="active"><a> <%= maxPage-1 %> </a></li>
+        <% } else { %>
+          <li> <%- link_to(maxPage-1, '/account/?page=' + (maxPage-1)) %> </li>
+        <% } %>
+
+        <% if (page === maxPage) { %>
+          <li class="active"><a> <%= maxPage %> </a></li>
+        <% } else { %>
+          <li> <%- link_to(maxPage, '/account/?page=' + maxPage) %> </li>
+        <% } %>
+
+        <% if (page < maxPage) { %>
+          <li> <%- link_to('&raquo;', '/account/?page=' + (page+1)) %> </li>
+        <% } else { %>
+          <li class="disabled"><a>&raquo;</a></li>
+        <% } %>
+
+      </ul>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Address</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for (var i = 0; i < accounts.length; i++) { %>
+            <tr>
+              <td><%= accounts[i].address %></td>
+              <td><%= accounts[i].balance %> Ether</td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+
+
+    </div> <!-- /container -->
+  </body>
+</html>

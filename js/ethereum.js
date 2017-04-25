@@ -12,6 +12,7 @@ var ethereum = function () {
 
     self.syncCount = 0;
     self.syncTransCount = 0;
+    self.syncAccountCount = 0;
 
     setTimeout(function () {
         DbHelper.getSyncStatus(function (result) {
@@ -26,7 +27,7 @@ var ethereum = function () {
 ethereum.prototype.syncStatus = function () {
     var self = this;
 
-    if (self.syncCount > 0 || self.syncTransCount > 0) {
+    if (self.syncCount > 0 || self.syncTransCount > 0 || self.syncAccountCount > 0) {
         return;
     }
 
@@ -120,6 +121,13 @@ ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
                 return;
             }
             self.syncTransCount += block.transactions.length;
+            self.syncAccountCount += block.transactions.length*2 + 1;
+            self.updateAccountByHash(block.miner, function () {
+                self.syncAccountCount -= 1;
+                if (!self.syncAccountCount) {
+                    self.syncStatus();
+                }
+            });
 
             block.number = parseInt(block.number);
             block.timestamp = new Date(parseInt(block.timestamp*1000));
@@ -130,6 +138,18 @@ ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
             }
 
             for (var i = 0; i < block.transactions.length; i++) {
+                self.updateAccountByHash(block.transactions[i].from, function () {
+                    self.syncAccountCount -= 1;
+                    if (!self.syncAccountCount) {
+                        self.syncStatus();
+                    }
+                });
+                self.updateAccountByHash(block.transactions[i].to, function () {
+                    self.syncAccountCount -= 1;
+                    if (!self.syncAccountCount) {
+                        self.syncStatus();
+                    }
+                });
                 self.updateTransactionByHash(block.transactions[i], function () {
                     self.syncTransCount -= 1;
                     if (!self.syncTransCount) {
@@ -137,6 +157,7 @@ ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
                         self.transNumber += block.transactions.length;
                         DbHelper.updateSyncStatus({transNumber: self.transNumber});
                         DbHelper.insertBlock(block, callback);
+                        self.syncStatus();
                     }
                 });
             }
@@ -186,6 +207,8 @@ ethereum.prototype.updateTransactionByHash = function (transactionHash, callback
             transaction.blockNumber = parseInt(transaction.blockNumber);
             transaction.transactionIndex = parseInt(transaction.transactionIndex);
             transaction.number = self.transNumber + transaction.transactionIndex + 1;
+            transaction.from = transaction.from || '0x0000000000000000000000000000000000000000';
+            transaction.to = transaction.to || '0x0000000000000000000000000000000000000000';
 
             DbHelper.insertTransaction(transaction, callback);
         });
@@ -193,7 +216,53 @@ ethereum.prototype.updateTransactionByHash = function (transactionHash, callback
 
     req.on('error', function (e) {
         console.error('ERROR: updateTransactionByHash ' + transactionHash + ', ' + e.message + ', retry');
-        self.updateBlockByNumber(transactionHash, callback);
+        self.updateTransactionByHash(transactionHash, callback);
+    });
+
+    req.write(postData);
+    req.end();
+};
+
+ethereum.prototype.updateAccountByHash = function (accountHash, callback) {
+    var self = this;
+
+    accountHash = accountHash || '0x0000000000000000000000000000000000000000';
+
+    var postData = JSON.stringify({
+        jsonrpc: "2.0",
+        method: "eth_getBalance",
+        params:[
+            accountHash,
+            'latest'
+        ],
+        id: 1
+    });
+
+    var options = {
+        host: Config.gethHost,
+        port: Config.gethPort,
+        path: '/',
+        headers: {
+            "Content-Type": 'application/x-www-form-urlencoded',
+            "Content-Length": postData.length
+        }
+    };
+
+    var req = Http.request(options, function (res) {
+        var response = '';
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+            response += chunk;
+        });
+        res.on('end', function () {
+            var account = {address: accountHash, balance: parseInt(JSON.parse(response).result) / 1000000000000000000};
+            DbHelper.updateAccount(account, callback);
+        });
+    });
+
+    req.on('error', function (e) {
+        console.error('ERROR: updateAccountByHash ' + accountHash + ', ' + e.message + ', retry');
+        self.updateAccountByHash(accountHash, callback);
     });
 
     req.write(postData);

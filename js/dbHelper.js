@@ -64,6 +64,13 @@ var dbHelper = function () {
             collection: "transactions"
         });
 
+        self.accountSchema = new mongoose.Schema({
+            address: {type: String, unique: true},
+            balance: {type: Number}
+        }, {
+            collection: "accounts"
+        });
+
     });
 };
 
@@ -129,6 +136,31 @@ dbHelper.prototype.queryTransaction = function (whereStr, fields, params, callba
     var self = this;
     var Transaction = mongoose.model('transactions', self.transactionSchema);
     Transaction.find(whereStr, fields, params, function (err, docs) {
+        if (err) {
+            console.error('ERROR: query transaction ' + JSON.stringify(whereStr));
+        }
+        callback(docs);
+    });
+};
+
+dbHelper.prototype.updateAccount = function (data, callback) {
+    var self = this;
+
+    var Account = mongoose.model('accounts', self.accountSchema);
+    Account.update({address: data.address}, {$set: data}, function (err, num) {
+        if (!num.n) {
+            var account = new Account(data);
+            account.save();
+        }
+        callback();
+    });
+};
+
+dbHelper.prototype.queryAccount = function (whereStr, fields, params, callback) {
+    var self = this;
+
+    var Account = mongoose.model('accounts', self.accountSchema);
+    Account.find(whereStr, fields, params, function (err, docs) {
         if (err) {
             console.error('ERROR: query transaction ' + JSON.stringify(whereStr));
         }
