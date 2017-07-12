@@ -6,7 +6,9 @@ var config = require('../etherql.cfg.json');
 var dbHelper = function () {
     var self = this;
 
-    mongoose.connect(config.mongo);
+    mongoose.connect(config.mongo, {
+        useMongoClient: true
+    });
     self.db = mongoose.connection;
     self.db.on('error', console.error.bind(console, 'Error: connection error:'));
     self.db.once('open', function () {
