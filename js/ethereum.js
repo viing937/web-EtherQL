@@ -43,7 +43,7 @@ ethereum.prototype.syncStatus = function () {
         port: Config.gethPort,
         path: '/',
         headers: {
-            "Content-Type": 'application/x-www-form-urlencoded',
+            "Content-Type": 'application/json',
             "Content-Length": postData.length
         }
     };
@@ -102,7 +102,7 @@ ethereum.prototype.updateBlockByNumber = function (blockNumber, callback) {
         port: Config.gethPort,
         path: '/',
         headers: {
-            "Content-Type": 'application/x-www-form-urlencoded',
+            "Content-Type": 'application/json',
             "Content-Length": postData.length
         }
     };
@@ -190,7 +190,7 @@ ethereum.prototype.updateTransactionByHash = function (transactionHash, callback
         port: Config.gethPort,
         path: '/',
         headers: {
-            "Content-Type": 'application/x-www-form-urlencoded',
+            "Content-Type": 'application/json',
             "Content-Length": postData.length
         }
     };
@@ -243,7 +243,7 @@ ethereum.prototype.updateAccountByHash = function (accountHash, callback) {
         port: Config.gethPort,
         path: '/',
         headers: {
-            "Content-Type": 'application/x-www-form-urlencoded',
+            "Content-Type": 'application/json',
             "Content-Length": postData.length
         }
     };

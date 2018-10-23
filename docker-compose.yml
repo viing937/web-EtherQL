@@ -7,7 +7,7 @@ services:
     expose:
       - "30303"
       - "8545"
-    entrypoint: /geth --cache=512 --rpc --rpcaddr "0.0.0.0"
+    entrypoint: geth --cache=512 --rpc --rpcaddr "0.0.0.0" --rpcvhosts=*
   mongodb:
     image: mongo:latest
     volumes:
